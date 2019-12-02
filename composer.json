@@ -1,0 +1,13 @@
+{
+    "name": "frangarcia/bamboohr-time-off",
+    "require": {
+        "bamboohr/api": "dev-master",
+        "vlucas/phpdotenv": "^4.0"
+    },
+    "authors": [
+        {
+            "name": "Fran Garcia",
+            "email": "fjgarlin@gmail.com"
+        }
+    ]
+}
