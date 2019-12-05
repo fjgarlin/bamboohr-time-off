@@ -4,6 +4,11 @@
         "bamboohr/api": "dev-master",
         "vlucas/phpdotenv": "^4.0"
     },
+    "autoload": {
+        "classmap": [
+            "app"
+        ]
+    },
     "authors": [
         {
             "name": "Fran Garcia",
