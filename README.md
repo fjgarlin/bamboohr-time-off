@@ -9,4 +9,5 @@ who's out and when.
 ## Run the project
 
 * Create a `.env` file using `.env.example` as reference and put the right values.
+* `composer install`
 * `php -S localhost:8000 -t web/`
