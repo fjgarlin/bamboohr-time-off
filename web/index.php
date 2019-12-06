@@ -12,20 +12,13 @@ use App\Calendar;
 $dotenv = Dotenv::createImmutable(__DIR__ . '/..');
 $dotenv->load();
 
-$bhr = new BambooHr("fjgarlin", new BambooJSONHTTP());
+$bhr = new BambooHr(getenv('BAMBOOHR_DOMAIN'), new BambooJSONHTTP());
 $bhr->setSecretKey(getenv('BAMBOOHR_KEY'));
 
 $request = new Request($_GET);
 
-$date_start = $request->get('start_date');
-if (!strtotime($date_start)) {
-   $date_start = date('Y-m-d');
-}
-$date_end = $request->get('start_end');
-if (!strtotime($date_end)) {
-   $date_end = date('Y-m-d', strtotime('+1 month'));
-}
-
+$date_start = $request->getAsDate('start_date');
+$date_end = $request->getAsDate('end_date');
 
 // $response = $bhr->getTimeOffPolicies(37);
 // $response = $bhr->getTimeOffRequestsArr([
@@ -33,10 +26,9 @@ if (!strtotime($date_end)) {
 //     'start' => '2019-12-01',
 //     'end' => '2019-12-31',
 // ]);
-// $response = $bhr->getTimeOffBalances(37, '2019-12-31');
 // $response = $bhr->getDirectory();
+
 $response = $bhr->getWhosOut($date_start, $date_end);
-// $response = $bhr->getTimeOffTypes();
 if($response->isError()) {
    trigger_error("Error communicating with BambooHR: " . $response->getErrorMessage());
 }
@@ -47,9 +39,8 @@ if (!empty($data)) {
    $data = Calendar::parseData($data);
 }
 else {
-   $message = 'No data couuld be found.';
+   $message = 'No data could be found.';
 }
-
 
 ?>
 <!DOCTYPE html>
@@ -58,27 +49,31 @@ else {
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-   <!-- Latest compiled and minified CSS -->
-   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
-
-   <!-- Optional theme -->
-   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css" integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
-
-   <!-- Latest compiled and minified JavaScript -->
-   <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
-
+   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
    <title>Who's out</title>
 </head>
 <body>
    <div class="container">
       <h1>Who's out</h1>
       <hr>
-      <form action="" class="well form-inline">
-         <div class="form-group">
-            <input class="form-control" type="date" name="start_date" placeholder="Start date" value="<?php print $date_start; ?>" /> to 
-            <input class="form-control" type="date" name="end_date" placeholder="End date" value="<?php print $date_end; ?>" />
+      <form action="" class="row">
+         <div class="col">
+            <div class="row">
+               <div class="col input-group">
+                  <div class="input-group-prepend">
+                     <span class="input-group-text">From</span>
+                  </div>
+                  <input class="form-control" type="date" name="start_date" placeholder="Start date" value="<?php print $date_start; ?>" />
+               </div>
+               <div class="col input-group">
+                  <div class="input-group-prepend">
+                     <span class="input-group-text">To</span>
+                  </div>
+                  <input class="form-control" type="date" name="end_date" placeholder="End date" value="<?php print $date_end; ?>" />
+               </div>
+            </div>
          </div>
-         <div class="form-group">
+         <div class="col">
             <input class="btn btn-primary" type="submit" value="Check who's out" />
          </div>
       </form>
@@ -89,15 +84,24 @@ else {
       <?php endif; ?>
 
       <?php if ($data): ?>
-         <?php foreach ($data as $date => $people): ?>
-            <h3><?php print $date; ?></h3>
-            <ul>
-               <?php foreach ($people as $person): ?>
-                  <li><?php print $person; ?></li>
-               <?php endforeach; ?>
-            </ul>
-            <hr>
-         <?php endforeach; ?>
+         <div class="row row-cols-1 row-cols-md-1">
+            <?php foreach ($data as $date => $people): ?>
+               <div class="col">
+                  <div class="card">
+                     <h5 class="card-header"><?php print $date; ?></h5>
+                     <div class="card-body">
+                        <p class="card-text">
+                           <ul>
+                              <?php foreach ($people as $person): ?>
+                                 <li><?php print $person; ?></li>
+                              <?php endforeach; ?>
+                           </ul>
+                        </p>
+                     </div>
+                  </div>
+               </div>
+            <?php endforeach; ?>
+         </div>
       <?php endif; ?>
    </div>
 </body>
