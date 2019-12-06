@@ -75,8 +75,8 @@ else {
       <hr>
       <form action="" class="well form-inline">
          <div class="form-group">
-            <input class="form-control" type="date" name="start_date" placeholder="Start date" value="<?php print date('Y-m-d') ?>" /> to 
-            <input class="form-control" type="date" name="end_date" placeholder="End date" value="<?php print date('Y-m-d', strtotime('+1 month')) ?>" />
+            <input class="form-control" type="date" name="start_date" placeholder="Start date" value="<?php print $date_start; ?>" /> to 
+            <input class="form-control" type="date" name="end_date" placeholder="End date" value="<?php print $date_end; ?>" />
          </div>
          <div class="form-group">
             <input class="btn btn-primary" type="submit" value="Check who's out" />
