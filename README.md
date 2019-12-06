@@ -2,3 +2,5 @@
 
 Reads data from BambooHR API and plot it in a calendar / table view to see 
 who's out and when.
+
+![Who's out image](./whosout.png)
